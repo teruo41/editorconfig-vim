@@ -391,8 +391,19 @@ endfunction
 function! s:UseConfigFiles_Python_External() " {{{2
 " Use external python interp to run the python EditorConfig Core
 
+    " unset 'shellslash'
+    if has('win32') && empty(matchstr(&shell, 'sh'))
+        let l:old_shellslash = &l:shellslash
+        setlocal noshellslash
+    endif
+
     let l:cmd = shellescape(s:editorconfig_python_interp) . ' ' .
                 \ shellescape(s:editorconfig_core_py_dir . '/main.py')
+
+    " restore 'shellslash'
+    if exists('l:old_shellslash')
+        let &l:shellslash = l:old_shellslash
+    endif
 
     call s:SpawnExternalParser(l:cmd)
 
